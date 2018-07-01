@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>eshop | Cart</title>
+<link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Comfortaa">
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="css/theme4.css">
+<link rel="stylesheet" type="text/css" href="css/lightbox.css">
+</head>
+<body>
+
+<div class="container">
+<nav class="navbar navbar-dark navbar-expand-md fixed-top">
+<ul class="nav">
+  <li class="nav-item active">
+    
+    <ul class="nav nav-pills">
+      <li class="dropdown active">
+        <a id="drop1" class="button8" href="#" data-toggle="dropdown" data-trigger="mouseover" aria-haspopup="true" role="button" aria-expanded="false">Catalog <span class="caret"></span></a>
+          
+          <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+            <li role="presentation"><a role="menuitem" href="#">ActionActionAction</a></li>
+            <li role="presentation"><a role="menuitem" href="#">Another action</a></li>
+            <li role="presentation" class="dropdown">
+              <a role="menuitem" href="#" data-toggle="dropdown">This is nesting <span class="caret"></span></a>
+              <ul class="dropdown-menu right" role="menu" aria-labelledby="drop2">
+                <li role="presentation"><a role="menuitem" href="#">Action</a></li>
+                <li role="presentation"><a role="menuitem" href="#">Another action</a></li>
+                <li role="presentation"><a role="menuitem" href="#">Something else here</a></li>
+                <li role="presentation" class="divider"></li>
+                <li role="presentation" class="dropdown">
+                  <a role="menuitem" href="#" data-toggle="dropdown">Sub-menu <span class="caret"></span></a>
+                  <ul class="dropdown-menu right" role="menu" aria-labelledby="drop3">
+                    <li role="presentation"><a role="menuitem" href="#">Level 1</a></li>
+                    <li role="presentation"><a role="menuitem" href="#">Nested Menu</a></li>
+                    <li role="presentation" class="dropdown">
+                      <a role="menuitem" href="#" data-toggle="dropdown">Other stuff <span class="caret"></span></a>
+                      <ul class="dropdown-menu right" role="menu" aria-labelledby="drop4">
+                        <li role="presentation"><a role="menuitem" href="#">Level 2</a></li>
+                        <li role="presentation"><a role="menuitem" href="#">Nested Menu</a></li>
+                        <li role="presentation" class="dropdown">
+                          <a role="menuitem" href="#" data-toggle="dropdown">Even more stuff <span class="caret"></span></a>
+                          <ul class="dropdown-menu right" role="menu" aria-labelledby="drop5">
+                            <li role="presentation"><a role="menuitem" href="#">Level 3</a></li>
+                            <li role="presentation"><a role="menuitem" href="#">Nested Menu</a></li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li role="presentation" class="divider"></li>
+            <li role="presentation"><a role="menuitem" href="http://google.cn" target="_blank">External link</a></li>
+          </ul>
+          
+      </li>
+    </ul>
+    
+  </li>
+</ul>
+<a class="navbar-brand" href="/">eshop</a>
+<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="navbar-collapse collapse justify-content-center" id="navbarCollapse">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link button8" href="/">Main</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link button8" href="/cart">Cart</a>
+    </li>
+  </ul>
+</div>
+</nav>
+
+
+<div class="row d-block goodpage">
+  
+  <h4 class="goodpage-title">Some good page</h4>
+  
+  <img class="jslghtbx-thmb" src="img/1.jpg" data-jslghtbx="img/1.jpg" data-jslghtbx-group="mygroup1">
+  <img class="jslghtbx-thmb" src="img/2.jpg" data-jslghtbx="img/2.jpg" data-jslghtbx-group="mygroup1">
+  <img class="jslghtbx-thmb" src="img/3.jpg" data-jslghtbx="img/3.jpg" data-jslghtbx-group="mygroup1">
+  
+  <hr class="style16">
+  
+  <div class="goodinfo">
+  zzz<br>
+  fff<br>
+  ggg<br>
+  rrr<br>
+  good info
+  </div>
+  
+  <hr class="style16">
+  <a href="#" id="goodtocart" class="btn btn-success">Add to Cart</a>
+
+</div>
+
+<footer><div class="container text-center">eshop &copy;2018</div></footer>
+</div>
+
+<script src="js/bootstrap-native-v4.js" defer></script>
+<script src="js/scripts4.js" defer></script>
+<script src="js/lightbox.js" defer></script>
+<script>
+window.addEventListener("load", function(){
+  var lightbox = new Lightbox();
+  lightbox.load();
+});
+</script>
+
+</body>
+</html>

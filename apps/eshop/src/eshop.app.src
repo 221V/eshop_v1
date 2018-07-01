@@ -1,0 +1,9 @@
+{application, eshop,
+ [
+  {description, "Erlang shop Application"},
+  {vsn, "0.9"},
+  {registered, []},
+  {applications, [kernel, stdlib, mnesia, n2o, epgsql_pool]},
+  {mod, { eshop, []}},
+  {env, []}
+ ]}.

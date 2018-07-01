@@ -1,0 +1,137 @@
+
+.left{text-align:left;}
+.center{text-align:center;}
+.right{text-align:right;}
+.justify{text-align:justify;}
+.rtl{direction:rtl;}
+.ltr{direction:ltr;}
+.bbfont_arial{font-family:Arial;}
+.bbfont_arialblack{font-family:'Arial Black';}
+.bbfont_comicsansms{font-family:'Comic Sans MS';}
+.bbfont_couriernew{font-family:'Courier New';}
+.bbfont_georgia{font-family:Georgia;}
+.bbfont_impact{font-family:Impact;}
+.bbfont_sansserif{font-family:'Sans-serif';}
+.bbfont_serif{font-family:Serif;}
+.bbfont_timesnewroman{font-family:'Times New Roman';}
+.bbfont_trebuchetms{font-family:'Trebuchet MS';}
+.bbfont_verdana{font-family:Verdana;}
+.bbfontsize_1{font-size:0.63 em;}
+.bbfontsize_2{font-size:0.82 em;}
+.bbfontsize_3{font-size:1.0 em;}
+.bbfontsize_4{font-size:1.13 em;}
+.bbfontsize_5{font-size:1.5 em;}
+.bbfontsize_6{font-size:2 em;}
+.bbfontsize_7{font-size:3 em;}
+.bbcolor_1{color:#000000;}
+.bbcolor_2{color:#44B8FF;}
+.bbcolor_3{color:#1E92F7;}
+.bbcolor_4{color:#0074D9;}
+.bbcolor_5{color:#005DC2;}
+.bbcolor_6{color:#00369B;}
+.bbcolor_7{color:#b3d5f4;}/* fix style - all hex color to upper-case in sceditor and here */
+.bbcolor_8{color:#444444;}
+.bbcolor_9{color:#C3FFFF;}
+.bbcolor_10{color:#9DF9FF;}
+.bbcolor_11{color:#7FDBFF;}
+.bbcolor_12{color:#68C4E8;}
+.bbcolor_13{color:#419DC1;}
+.bbcolor_14{color:#d9f4ff;}
+.bbcolor_15{color:#666666;}
+.bbcolor_16{color:#72FF84;}
+.bbcolor_17{color:#4CEA5E;}
+.bbcolor_18{color:#2ECC40;}
+.bbcolor_19{color:#17B529;}
+.bbcolor_20{color:#008E02;}
+.bbcolor_21{color:#c0f0c6;}
+.bbcolor_22{color:#888888;}
+.bbcolor_23{color:#FFFF44;}
+.bbcolor_24{color:#FFFA1E;}
+.bbcolor_25{color:#FFDC00;}
+.bbcolor_26{color:#E8C500;}
+.bbcolor_27{color:#C19E00;}
+.bbcolor_28{color:#fff5b3;}
+.bbcolor_29{color:#aaaaaa;}
+.bbcolor_30{color:#FFC95F;}
+.bbcolor_31{color:#FFA339;}
+.bbcolor_32{color:#FF851B;}
+.bbcolor_33{color:#E86E04;}
+.bbcolor_34{color:#C14700;}
+.bbcolor_35{color:#ffdbbb;}
+.bbcolor_36{color:#cccccc;}
+.bbcolor_37{color:#FF857A;}
+.bbcolor_38{color:#FF5F54;}
+.bbcolor_39{color:#FF4136;}
+.bbcolor_40{color:#E82A1F;}
+.bbcolor_41{color:#C10300;}
+.bbcolor_42{color:#ffc6c3;}
+.bbcolor_43{color:#eeeeee;}
+.bbcolor_44{color:#FF56FF;}
+.bbcolor_45{color:#FF30DC;}
+.bbcolor_46{color:#F012BE;}
+.bbcolor_47{color:#D900A7;}
+.bbcolor_48{color:#B20080;}
+.bbcolor_49{color:#fbb8ec;}
+.bbcolor_50{color:#ffffff;}
+.bbcolor_51{color:#F551FF;}
+.bbcolor_52{color:#CF2BE7;}
+.bbcolor_53{color:#B10DC9;}
+.bbcolor_54{color:#9A00B2;}
+/*.bbcolor_55{color:#9A00B2;} //todo - fix #9A00B2 twice in sceditor and here */
+.bbcolor_56{color:#e8b6ef;}
+
+#bb_preview_good,
+#bb_full_good{
+width:80%;
+height:300px;
+display:none;
+}
+
+label.tag_cast > input{
+  display:none;
+}
+label.tag_cast > input ~ span{
+  display:inline-block;
+  float:left;
+  margin-top:3px;
+  margin-bottom:3px;
+  margin-left:10px;
+  padding-top:2px;
+  padding-bottom:2px;
+  padding-left:6px;
+  padding-right:6px;
+  color:#777;
+  background:linear-gradient(to top,#ddf0f5 10%,#dbf0df 100%);
+  border:1px solid;
+  border-color: #4e765d #5b8a6c #75b28b #83c69b;
+  border-radius:3px;
+  border-collapse:separate;
+  white-space:nowrap;
+  cursor:pointer;
+}
+label.tag_cast > input:checked ~ span{
+  color:#000;
+  background:linear-gradient(to top,#a9dcb2 10%,#f2f9f5 100%);
+}
+
+#add_new > label,
+#good_edit > label{
+  min-width:99%;
+}
+#cat_id,
+#good_title,
+#good_img_title{
+  width:75%;
+}
+
+p#selecttags > span{
+display:inline-block;
+}
+
+#html_preview_good,
+#html_good{
+width:100%;
+}
+
+
+

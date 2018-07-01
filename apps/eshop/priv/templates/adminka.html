@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{{pagetitle}}</title>
+<link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Comfortaa">
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/css/theme4.css">
+</head>
+<body>
+
+<div class="container">
+<nav class="navbar navbar-dark navbar-expand-md fixed-top">
+
+<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="navbar-collapse collapse justify-content-center" id="navbarCollapse">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="/adminka/">{{adminka_main}}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="do_logout" href="#!">{{adminka_logout}}</a>
+    </li>
+  </ul>
+</div>
+</nav>
+
+
+
+<div class="row d-block">
+  
+  {{adminka_content}}
+  
+</div>
+
+</div>
+
+<script>{{script}}</script>
+<script src="/js/n2o/protocols/bert.js" defer></script>
+<script src="/js/n2o/protocols/client.js" defer></script>
+<script src="/js/n2o/protocols/nitrogen.js" defer></script>
+<script src="/js/n2o/bullet.js" defer></script>
+<script src="/js/n2o/xhr.js" defer></script>
+<script src="/js/n2o/utf8.js" defer></script>
+<script src="/js/n2o/template.js" defer></script>
+<script src="/js/n2o/n2o.js" defer></script>
+<script src="/js/n2o/validation.js" defer></script>
+<script>
+window.addEventListener("load", function load(e0){
+  protos = [$client,$bert]; N2O_start();
+},false);
+</script>
+
+<script src="/js/bootstrap-native-v4.js" defer></script>
+<script src="/js/scripts4.js" defer></script>
+<script src="/js/admin.js" defer></script>
+</body>
+</html>

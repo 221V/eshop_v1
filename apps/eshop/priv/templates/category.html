@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{{pagetitle}}</title>
+<link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Comfortaa">
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/css/lightbox.css">
+<link rel="stylesheet" type="text/css" href="/css/theme4.css">
+</head>
+<body>
+
+<div class="container">
+<nav class="navbar navbar-dark navbar-expand-md fixed-top">
+<ul class="nav">
+  <li class="nav-item active">
+  
+  <ul class="nav nav-pills">
+      <li class="dropdown active">
+        <a id="drop1" class="button8" href="#" data-toggle="dropdown" data-trigger="mouseover" aria-haspopup="true" role="button" aria-expanded="false">{{catalogtitle}} <span class="caret"></span></a>
+        
+        <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+        {{dropdowncatalog}}
+        </ul>
+      </li>
+  </ul>
+  </li>
+</ul>
+
+<a class="navbar-brand" href="/">{{brandname}}</a>
+<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="navbar-collapse collapse justify-content-center" id="navbarCollapse">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link button8" href="/">{{mainbutton}}</a>
+    </li>
+    <li class="nav-item dropdown">
+      <a id="CartModalTrigger" class="nav-link button8" data-toggle="modal" data-target="#CartModal" href="/cart/">{{cartbutton}}</a>
+    </li>
+  </ul>
+</div>
+</nav>
+
+
+
+<div class="row d-block">
+  
+  <div id="CartModal" class="modal fade" role="dialog" aria-labelledby="CartModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+  <div class="modal-header">
+  <h4 class="modal-title" id="CartModalLabel">{{carttitle}}</h4>
+  <button class="close" data-dismiss="modal" arial-label="Close"><span aria-hidden="true">x</span></button>
+  </div>
+  <div class="modal-body">
+  {{cartwindow}}
+  </div>
+  <div class="modal-footer">
+  <p id="cart_userinfo">
+  <label><span>Your name:</span><br><input id="cart_user_name" type="text" placeholder="Name"></label><br>
+  <label><span>Your email:</span><br><input id="cart_user_email" type="text" placeholder="Email"></label><br>
+  <label><span>Your phone number:</span><br><input id="cart_user_phone" type="text" placeholder="777"></label><br>
+  <label><span>Comment (optional):</span><br><textarea id="cart_user_comment"></textarea></label><br>
+  </p>
+  <button class="btn btn-warning" data-dismiss="modal">{{cartclose}}</button>
+  <button id="ordernow" class="btn btn-outline-success">{{cartordernow}}</button>
+  </div>
+  </div>
+  </div>
+  </div>
+  
+  
+  <p>
+  {{active_category}}<br>
+  <select id="goodssorting" class="form-control form-control-sm">
+  {{sortselectoptions}}
+  </select>
+  </p>
+  
+  <div class="card-columns">
+  {{pagegoods}}
+  </div>
+  
+  <div class="row" id="loadmorebl">
+  <p><button id="loadmorebtn" class="btn btn-outline-success">{{loadnmoregoods}}</button></p>
+  </div>
+  
+  
+  <hr class="style16">
+
+</div>
+
+<footer><div class="container text-center">{{footercopybrandyear}}</div></footer>
+</div>
+
+<script>{{script}}</script>
+<script src="/js/n2o/protocols/bert.js" defer></script>
+<script src="/js/n2o/protocols/client.js" defer></script>
+<script src="/js/n2o/protocols/nitrogen.js" defer></script>
+<script src="/js/n2o/bullet.js" defer></script>
+<script src="/js/n2o/xhr.js" defer></script>
+<script src="/js/n2o/utf8.js" defer></script>
+<script src="/js/n2o/template.js" defer></script>
+<script src="/js/n2o/n2o.js" defer></script>
+<script src="/js/n2o/validation.js" defer></script>
+<script>
+window.addEventListener("load", function load(e0){
+  protos = [$client,$bert]; N2O_start();
+},false);
+</script>
+
+<script src="/js/bootstrap-native-v4.js" defer></script>
+<script src="/js/scripts4.js" defer></script>
+<script src="/js/lightbox.js" defer></script>
+<script src="/js/user.js" defer></script>
+</body>
+</html>
