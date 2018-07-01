@@ -29,7 +29,9 @@ Run
 On Linux
 
 1 -- create telegram bot, get bot token
+
 2 -- install nginx, erlang, postgresql, other
+
 3 -- put this code, edit settings in sys.config and run
 
     $ ./mad deps compile plan repl
@@ -48,6 +50,7 @@ Thanks
 * thank you, letsencrypt developers ( letsencrypt.org )
 * thank you, telegram developers ( telegram.org )
 * and more other people, including debian, ubuntu & lxde developers etc
+
 Thank You, You make me happy :)
 
 
