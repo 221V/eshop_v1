@@ -3,10 +3,10 @@
 
 %html generate module
 
-% generate_cat_tree(All_Data, [], [], []) | generate_cat_tree(NonRoot_Data, Root_Data, Html_Acc, Drop_Id)
+% generate_cat_tree(All_Data, [], Lang, [], []) | generate_cat_tree(NonRoot_Data, Root_Data, Lang, Html_Acc, Drop_Id)
 % generate_admin_cat_list(All_Data, [], [], <<"">>) | generate_admin_cat_list(NonRoot_Data, Root_Data, Html_Acc, Dot_Id)
-% generate_admin_cat_rows(All_Data, [], [], <<"">>) | generate_admin_cat_rows(NonRoot_Data, Root_Data, Html_Acc, Dot_Id)
-% generate_cat_childsrows(Data,Acc)
+% generate_admin_cat_rows(All_Data, [], Lang, [], <<"">>) | generate_admin_cat_rows(NonRoot_Data, Root_Data, Lang, Html_Acc, Dot_Id)
+% generate_cat_childsrows(Data,Lang,Acc)
 % generate_admin_addgoodform(Cats_HTML)
 % generate_admin_editgoodform({Id, Title, Img_Title, BB_Preview_Text, Html_Preview_Text, BB_Full_Text, Html_Full_Text, Category_Id, Bought_Count, Price, Available_Status, Status}, Cats_HTML, Acc)
 % generate_admin_edithtmlgoodform({Id, Title, Img_Title, BB_Preview_Text, Html_Preview_Text, BB_Full_Text, Html_Full_Text, Category_Id, Bought_Count, Price, Available_Status, Status}, Cats_HTML, Acc)
@@ -21,14 +21,14 @@
 % generate_admin_goods_rows(Goods_Data,Acc)
 % generate_admin_orders_rows(Orders_Data,Acc)
 % generate_simple_pagination(Active_Page, true||false)
-% generate_sortselect_opts()
-% generate_main_goodscards(PageGoodsData,Acc)
+% generate_sortselect_opts(Lang)
+% generate_main_goodscards(PageGoodsData, Lang, Acc)
 % 
 
 
-%generate_cat_tree(All_Data, [], [], [])
-%generate_cat_tree(NonRoot_Data, Root_Data, Html_Acc, Drop_Id)
-generate_cat_tree(All_Data, [], [], []) ->
+%generate_cat_tree(All_Data, [], Lang, [], [])
+%generate_cat_tree(NonRoot_Data, Root_Data, Lang, Html_Acc, Drop_Id)
+generate_cat_tree(All_Data, [], Lang, [], []) ->
   %% begin work here -- create root-data-list and nonroot-data-list
   % {Id, Name, Parent, Status, Ordering}
   F1 = fun({_,_,0,_,_}) -> true; (_) -> false end,
@@ -37,14 +37,14 @@ generate_cat_tree(All_Data, [], [], []) ->
   Root_Data = lists:filter(F1,All_Data),
   NonRoot_Data = lists:filter(F2,All_Data),
   %% Drop_Id starts from 2
-  ?MODULE:generate_cat_tree(NonRoot_Data, Root_Data, [], 2);
-generate_cat_tree(_, [], Html_Acc, _) ->
+  ?MODULE:generate_cat_tree(NonRoot_Data, Root_Data, Lang, [], 2);
+generate_cat_tree(_, [], _, Html_Acc, _) ->
   %% exit here
   lists:reverse(Html_Acc);
-%generate_cat_tree(NonRoot_Data, [{Id,Name,Parent,Status,Ordering}|T], Html_Acc, Drop_Id)
-generate_cat_tree(NonRoot_Data, [{Id,Name,_,0,_}|T], Html_Acc, Drop_Id) ->
-  ?MODULE:generate_cat_tree(NonRoot_Data, T, Html_Acc, Drop_Id);
-generate_cat_tree(NonRoot_Data, [{Id,Name,_,1,_}|T], Html_Acc, Drop_Id) ->
+%generate_cat_tree(NonRoot_Data, [{Id,Name,Parent,Status,Ordering}|T], Lang, Html_Acc, Drop_Id)
+generate_cat_tree(NonRoot_Data, [{Id,Name,_,0,_}|T], Lang, Html_Acc, Drop_Id) ->
+  ?MODULE:generate_cat_tree(NonRoot_Data, T, Lang, Html_Acc, Drop_Id);
+generate_cat_tree(NonRoot_Data, [{Id,Name,_,1,_}|T], Lang, Html_Acc, Drop_Id) ->
   % work for html here
   % {Id, Name, Parent, Status, Ordering}
   F1 = fun({_,_,Id2,_,_}) -> case Id2 of Id -> true; _ -> false end end,
@@ -55,8 +55,9 @@ generate_cat_tree(NonRoot_Data, [{Id,Name,_,1,_}|T], Html_Acc, Drop_Id) ->
   case ByParent1 of
     [] ->
       %% no dropdown
-      Z = [ <<"<li role=\"presentation\"><a role=\"menuitem\" href=\"/category/?id=">>, Id3, <<"\">">>, Name, <<"</a></li>">> ],
-      ?MODULE:generate_cat_tree(NonRoot_Data, T, [Z|Html_Acc], Drop_Id);
+      Name2 = tr_catalog:tr(Lang,Name),
+      Z = [ <<"<li role=\"presentation\"><a role=\"menuitem\" href=\"/category/?id=">>, Id3, <<"\">">>, Name2, <<"</a></li>">> ],
+      ?MODULE:generate_cat_tree(NonRoot_Data, T, Lang, [Z|Html_Acc], Drop_Id);
     _ ->
       %% dropdown here
       ByParent2 = lists:keysort(4,ByParent1),
@@ -66,21 +67,22 @@ generate_cat_tree(NonRoot_Data, [{Id,Name,_,1,_}|T], Html_Acc, Drop_Id) ->
       %% filter other -- new non-root data
       NonRoot_Data2 = lists:filter(F2,NonRoot_Data),
       
-      OpenPart = [ <<"<li role=\"presentation\" class=\"dropdown\"><a role=\"menuitem\" href=\"/category/?id=">>, Id3, <<"\" onclick=\"return false;\" data-toggle=\"dropdown\">">>, Name, <<" <span class=\"caret\"></span></a><ul class=\"dropdown-menu right\" role=\"menu\" aria-labelledby=\"drop">>, erlang:integer_to_binary(Drop_Id), <<"\">">> ],
+      Name2 = tr_catalog:tr(Lang,Name),
+      OpenPart = [ <<"<li role=\"presentation\" class=\"dropdown\"><a role=\"menuitem\" href=\"/category/?id=">>, Id3, <<"\" onclick=\"return false;\" data-toggle=\"dropdown\">">>, Name2, <<" <span class=\"caret\"></span></a><ul class=\"dropdown-menu right\" role=\"menu\" aria-labelledby=\"drop">>, erlang:integer_to_binary(Drop_Id), <<"\">">> ],
       
-      {R1,Drop_Id2} = ?MODULE:generate_cat_tree_helper1(NonRoot_Data2, ByParent2, [], Drop_Id + 1),
+      {R1,Drop_Id2} = ?MODULE:generate_cat_tree_helper1(NonRoot_Data2, ByParent2, Lang, [], Drop_Id + 1),
       Z = [ OpenPart, R1, <<"</ul></li>">> ],
-      ?MODULE:generate_cat_tree(NonRoot_Data2, T, [Z|Html_Acc], Drop_Id2)
+      ?MODULE:generate_cat_tree(NonRoot_Data2, T, Lang, [Z|Html_Acc], Drop_Id2)
   end.
 
 %% helper1
-%generate_cat_tree_helper1(NonRoot_Data, Root_Data, Html_Acc, Drop_Id)
-generate_cat_tree_helper1(_, [], Html_Acc, Drop_Id) ->
+%generate_cat_tree_helper1(NonRoot_Data, Root_Data, Lang, Html_Acc, Drop_Id)
+generate_cat_tree_helper1(_, [], _, Html_Acc, Drop_Id) ->
   {lists:reverse(Html_Acc), Drop_Id};
-%generate_cat_tree_helper1(NonRoot_Data, [{Id,Name,Parent,Status,Ordering}|T], Html_Acc, Drop_Id)
-generate_cat_tree_helper1(NonRoot_Data, [{Id,Name,_,0,_}|T], Html_Acc, Drop_Id) ->
-  ?MODULE:generate_cat_tree_helper1(NonRoot_Data, T, Html_Acc, Drop_Id);
-generate_cat_tree_helper1(NonRoot_Data, [{Id,Name,_,1,_}|T], Html_Acc, Drop_Id) ->
+%generate_cat_tree_helper1(NonRoot_Data, [{Id,Name,Parent,Status,Ordering}|T], Lang, Html_Acc, Drop_Id)
+generate_cat_tree_helper1(NonRoot_Data, [{Id,Name,_,0,_}|T], Lang, Html_Acc, Drop_Id) ->
+  ?MODULE:generate_cat_tree_helper1(NonRoot_Data, T, Lang, Html_Acc, Drop_Id);
+generate_cat_tree_helper1(NonRoot_Data, [{Id,Name,_,1,_}|T], Lang, Html_Acc, Drop_Id) ->
   % {Id, Name, Parent, Status, Ordering}
   F1 = fun({_,_,Id2,_,_}) -> case Id2 of Id -> true; _ -> false end end,
   %% filter childs by parent
@@ -90,8 +92,9 @@ generate_cat_tree_helper1(NonRoot_Data, [{Id,Name,_,1,_}|T], Html_Acc, Drop_Id) 
   case ByParent1 of
     [] ->
       %% no dropdown
-      Z = [ <<"<li role=\"presentation\"><a role=\"menuitem\" href=\"/category/?id=">>, Id3, <<"\">">>, Name, <<"</a></li>">> ],
-      ?MODULE:generate_cat_tree_helper1(NonRoot_Data, T, [Z|Html_Acc], Drop_Id);
+      Name2 = tr_catalog:tr(Lang,Name),
+      Z = [ <<"<li role=\"presentation\"><a role=\"menuitem\" href=\"/category/?id=">>, Id3, <<"\">">>, Name2, <<"</a></li>">> ],
+      ?MODULE:generate_cat_tree_helper1(NonRoot_Data, T, Lang, [Z|Html_Acc], Drop_Id);
     _ ->
       %% dropdown here
       ByParent2 = lists:keysort(4,ByParent1),
@@ -101,11 +104,12 @@ generate_cat_tree_helper1(NonRoot_Data, [{Id,Name,_,1,_}|T], Html_Acc, Drop_Id) 
       %% filter other -- new non-root data
       NonRoot_Data2 = lists:filter(F2,NonRoot_Data),
       
-      OpenPart = [ <<"<li role=\"presentation\" class=\"dropdown\"><a role=\"menuitem\" href=\"/category/?id=">>, Id3, <<"\" onclick=\"return false;\" data-toggle=\"dropdown\">">>, Name, <<" <span class=\"caret\"></span></a><ul class=\"dropdown-menu right\" role=\"menu\" aria-labelledby=\"drop">>, erlang:integer_to_binary(Drop_Id), <<"\">">> ],
+      Name2 = tr_catalog:tr(Lang,Name),
+      OpenPart = [ <<"<li role=\"presentation\" class=\"dropdown\"><a role=\"menuitem\" href=\"/category/?id=">>, Id3, <<"\" onclick=\"return false;\" data-toggle=\"dropdown\">">>, Name2, <<" <span class=\"caret\"></span></a><ul class=\"dropdown-menu right\" role=\"menu\" aria-labelledby=\"drop">>, erlang:integer_to_binary(Drop_Id), <<"\">">> ],
       
-      {R1,Drop_Id2} = ?MODULE:generate_cat_tree_helper1(NonRoot_Data2, ByParent2, [], Drop_Id + 1),
+      {R1,Drop_Id2} = ?MODULE:generate_cat_tree_helper1(NonRoot_Data2, ByParent2, Lang, [], Drop_Id + 1),
       Z = [ OpenPart, R1, <<"</ul></li>">> ],
-      ?MODULE:generate_cat_tree_helper1(NonRoot_Data2, T, [Z|Html_Acc], Drop_Id2)
+      ?MODULE:generate_cat_tree_helper1(NonRoot_Data2, T, Lang, [Z|Html_Acc], Drop_Id2)
   end.
 
 
@@ -200,9 +204,9 @@ generate_admin_cat_list_helper1(NonRoot_Data, [{Id,Name,_,Status,_}|T], Html_Acc
   end.
 
 
-%generate_admin_cat_rows(All_Data, [], [], <<"">>)
-%generate_admin_cat_rows(NonRoot_Data, Root_Data, Html_Acc, Dot_Id)
-generate_admin_cat_rows(All_Data, [], [], <<"">>) ->
+%generate_admin_cat_rows(All_Data, [], Lang, [], <<"">>)
+%generate_admin_cat_rows(NonRoot_Data, Root_Data, Lang, Html_Acc, Dot_Id)
+generate_admin_cat_rows(All_Data, [], Lang, [], <<"">>) ->
   %% begin work here -- create root-data-list and nonroot-data-list
   % {Id, Name, Parent, Status, Ordering}
   F1 = fun({_,_,0,_,_}) -> true; (_) -> false end,
@@ -212,12 +216,12 @@ generate_admin_cat_rows(All_Data, [], [], <<"">>) ->
   NonRoot_Data = lists:filter(F2,All_Data),
   Html_Acc = [ <<"<p><label><span>New category</span><br><span>category name</span><br><input id=\"new_category_name\" type=\"text\"></label><br><button onclick=\"new_category(this);\">Add category</button></p><hr class=\"style16\">">> ],
   %% Dot_Id starts from 2 dots
-  ?MODULE:generate_admin_cat_rows(NonRoot_Data, Root_Data, [Html_Acc|[]], <<"..">>);
-generate_admin_cat_rows(_, [], Html_Acc, _) ->
+  ?MODULE:generate_admin_cat_rows(NonRoot_Data, Root_Data, Lang, [Html_Acc|[]], <<"..">>);
+generate_admin_cat_rows(_, [], _, Html_Acc, _) ->
   %% exit here
   lists:reverse(Html_Acc);
-%generate_admin_cat_rows(NonRoot_Data, [{Id,Name,Parent,Status,Ordering}|T], Html_Acc, Dot_Id)
-generate_admin_cat_rows(NonRoot_Data, [{Id,Name,_,Status,Ordering}|T], Html_Acc, Dot_Id) ->
+%generate_admin_cat_rows(NonRoot_Data, [{Id,Name,Parent,Status,Ordering}|T], Lang, Html_Acc, Dot_Id)
+generate_admin_cat_rows(NonRoot_Data, [{Id,Name,_,Status,Ordering}|T], Lang, Html_Acc, Dot_Id) ->
   % work for html here
   % {Id, Name, Parent, Status, Ordering}
   F1 = fun({_,_,Id2,_,_}) -> case Id2 of Id -> true; _ -> false end end,
@@ -228,8 +232,8 @@ generate_admin_cat_rows(NonRoot_Data, [{Id,Name,_,Status,Ordering}|T], Html_Acc,
   case ByParent1 of
     [] ->
       %% no childs
-      Z = ?MODULE:generate_admin_cat_rows_helper2(Id3,Name,Status,Ordering),
-      ?MODULE:generate_admin_cat_rows(NonRoot_Data, T, [Z|Html_Acc], Dot_Id);
+      Z = ?MODULE:generate_admin_cat_rows_helper2(Id3,Name,Lang,Status,Ordering),
+      ?MODULE:generate_admin_cat_rows(NonRoot_Data, T, Lang, [Z|Html_Acc], Dot_Id);
     _ ->
       %% childs here
       ByParent2 = lists:keysort(4,ByParent1),
@@ -239,19 +243,19 @@ generate_admin_cat_rows(NonRoot_Data, [{Id,Name,_,Status,Ordering}|T], Html_Acc,
       %% filter other -- new non-root data
       NonRoot_Data2 = lists:filter(F2,NonRoot_Data),
       
-      R1 = ?MODULE:generate_admin_cat_rows_helper2(Id3,Name,Status,Ordering),
+      R1 = ?MODULE:generate_admin_cat_rows_helper2(Id3,Name,Lang,Status,Ordering),
       
-      {R2,_} = ?MODULE:generate_admin_cat_rows_helper1(NonRoot_Data2, ByParent2, [], Dot_Id),
+      {R2,_} = ?MODULE:generate_admin_cat_rows_helper1(NonRoot_Data2, ByParent2, Lang, [], Dot_Id),
       Z = [ R1, R2 ],
-      ?MODULE:generate_admin_cat_rows(NonRoot_Data2, T, [Z|Html_Acc], Dot_Id)
+      ?MODULE:generate_admin_cat_rows(NonRoot_Data2, T, Lang, [Z|Html_Acc], Dot_Id)
   end.
 
 %% helper1
-%generate_admin_cat_rows_helper1(NonRoot_Data, Root_Data, Html_Acc, Dot_Id)
-generate_admin_cat_rows_helper1(_, [], Html_Acc, Dot_Id) ->
+%generate_admin_cat_rows_helper1(NonRoot_Data, Root_Data, Lang, Html_Acc, Dot_Id)
+generate_admin_cat_rows_helper1(_, [], _, Html_Acc, Dot_Id) ->
   {lists:reverse(Html_Acc), Dot_Id};
-%generate_admin_cat_rows_helper1(NonRoot_Data, [{Id,Name,Parent,Status,Ordering}|T], Html_Acc, Dot_Id)
-generate_admin_cat_rows_helper1(NonRoot_Data, [{Id,Name,_,Status,Ordering}|T], Html_Acc, Dot_Id) ->
+%generate_admin_cat_rows_helper1(NonRoot_Data, [{Id,Name,Parent,Status,Ordering}|T], Lang, Html_Acc, Dot_Id)
+generate_admin_cat_rows_helper1(NonRoot_Data, [{Id,Name,_,Status,Ordering}|T], Lang, Html_Acc, Dot_Id) ->
   % {Id, Name, Parent, Status, Ordering}
   F1 = fun({_,_,Id2,_,_}) -> case Id2 of Id -> true; _ -> false end end,
   %% filter childs by parent
@@ -261,8 +265,8 @@ generate_admin_cat_rows_helper1(NonRoot_Data, [{Id,Name,_,Status,Ordering}|T], H
   case ByParent1 of
     [] ->
       %% no childs
-      Z = ?MODULE:generate_admin_cat_rows_helper2(Id3,{Dot_Id,Name},Status,Ordering),
-      ?MODULE:generate_admin_cat_rows_helper1(NonRoot_Data, T, [Z|Html_Acc], Dot_Id);
+      Z = ?MODULE:generate_admin_cat_rows_helper2(Id3,{Dot_Id,Name},Lang,Status,Ordering),
+      ?MODULE:generate_admin_cat_rows_helper1(NonRoot_Data, T, Lang, [Z|Html_Acc], Dot_Id);
     _ ->
       %% childs here
       ByParent2 = lists:keysort(4,ByParent1),
@@ -273,20 +277,20 @@ generate_admin_cat_rows_helper1(NonRoot_Data, [{Id,Name,_,Status,Ordering}|T], H
       NonRoot_Data2 = lists:filter(F2,NonRoot_Data),
       Dot_Id2 = <<"..", Dot_Id/binary>>,
       
-      R1 = ?MODULE:generate_admin_cat_rows_helper2(Id3,{Dot_Id,Name},Status,Ordering),
+      R1 = ?MODULE:generate_admin_cat_rows_helper2(Id3,{Dot_Id,Name},Lang,Status,Ordering),
       
-      {R2,Dot_Id3} = ?MODULE:generate_admin_cat_rows_helper1(NonRoot_Data2, ByParent2, [], Dot_Id2),
+      {R2,Dot_Id3} = ?MODULE:generate_admin_cat_rows_helper1(NonRoot_Data2, ByParent2, Lang, [], Dot_Id2),
       Z = [ R1, R2 ],
-      ?MODULE:generate_admin_cat_rows_helper1(NonRoot_Data2, T, [Z|Html_Acc], Dot_Id3)
+      ?MODULE:generate_admin_cat_rows_helper1(NonRoot_Data2, T, Lang, [Z|Html_Acc], Dot_Id3)
   end.
 
 
-generate_admin_cat_rows_helper2(Id3,Dot_Id_Name,Status,Ordering) ->
+generate_admin_cat_rows_helper2(Id3,Dot_Id_Name,Lang,Status,Ordering) ->
   Part = case Dot_Id_Name of
     {Dot_Id, Name} ->
-      [ Dot_Id, <<" ">>, Name ];
+       [ Dot_Id, <<" ">>, tr_catalog:tr(Lang,Name) ];
     Name ->
-      Name
+      tr_catalog:tr(Lang,Name)
   end,
   Status2 = case Status of
     0 ->
@@ -295,19 +299,21 @@ generate_admin_cat_rows_helper2(Id3,Dot_Id_Name,Status,Ordering) ->
     _ ->
       <<"<option value=\"0\">Hide</option><option value=\"1\" selected>Show</option>">>
   end,
-  [ <<"<p>id : ">>, Id3, <<" | <span>">>, Part, <<"</span> <button onclick=\"upd_category_name(this,">>, Id3, <<");\">Change name</button> <button onclick=\"move_category(this,">>, Id3, <<");\">Move category</button> | <select onchange=\"upd_category_status(this,">>, Id3, <<");\">">>, Status2, <<"</select> | <input class=\"category_order\" type=\"number\" min=\"0\" step=\"1\" value=\"">>, erlang:integer_to_binary(Ordering), <<"\"> <button onclick=\"update_category_order(this,">>, Id3, <<");\">Update ordering</button></p>">> ].
+  [ <<"<p>id : ">>, Id3, <<" | ">>, Part, <<" (<span>">>, Name, <<"</span>) <button onclick=\"upd_category_name(this,">>, Id3, <<");\">Change name</button> <button onclick=\"move_category(this,">>, Id3, <<");\">Move category</button> | <select onchange=\"upd_category_status(this,">>, Id3, <<");\">">>, Status2, <<"</select> | <input class=\"category_order\" type=\"number\" min=\"0\" step=\"1\" value=\"">>, erlang:integer_to_binary(Ordering), <<"\"> <button onclick=\"update_category_order(this,">>, Id3, <<");\">Update ordering</button></p>">> ].
 
 
-%generate_cat_childsrows(Data,Acc)
-generate_cat_childsrows([],Acc) ->
+%generate_cat_childsrows(Data,Lang,Acc)
+generate_cat_childsrows([],Lang,Acc) ->
   lists:reverse([<<"</p>">>|Acc]);
-generate_cat_childsrows(Data,[]) ->
-  Z = <<"<p><span id=\"no_goods_here\">SubCategories:</span><br><br>">>,
-  ?MODULE:generate_cat_childsrows(Data,[Z|[]]);
-generate_cat_childsrows([{Id,Name}|T],Acc) ->
+generate_cat_childsrows(Data,Lang,[]) ->
+  SubText = tr:tr(Lang, category, <<"sub_categories">>),
+  Z = [ <<"<p><span id=\"no_goods_here\">">>, SubText, <<":</span><br><br>">> ],
+  ?MODULE:generate_cat_childsrows(Data,Lang,[Z|[]]);
+generate_cat_childsrows([{Id,Name}|T],Lang,Acc) ->
   %Z = [ <<"<p><a href=\"/category/?id=">>, erlang:integer_to_binary(Id), <<"\" target=\"_blank\">">>, Name, <<"</a></p>">> ],
-  Z = [ <<"<a href=\"/category/?id=">>, erlang:integer_to_binary(Id), <<"\" target=\"_blank\"><span>">>, Name, <<"</span></a><br>">> ],
-  ?MODULE:generate_cat_childsrows(T,[Z|Acc]).
+  Name2 = tr_catalog:tr(Lang,Name),
+  Z = [ <<"<a href=\"/category/?id=">>, erlang:integer_to_binary(Id), <<"\" target=\"_blank\"><span>">>, Name2, <<"</span></a><br>">> ],
+  ?MODULE:generate_cat_childsrows(T,Lang,[Z|Acc]).
 
 
 generate_admin_addgoodform(Cats_HTML) ->
@@ -667,34 +673,49 @@ generate_simple_pagination(Active_Page, Is_Valid_Next) ->
   [ Begin, End, <<"<hr class=\"style16\">">> ].
 
 
-generate_sortselect_opts() ->
-  <<"<option value=\"1\" selected>Sort by rating</option>"
-  "<option value=\"2\">Cheapest first</option>"
-  "<option value=\"3\">Most expensive first</option>">>.
+generate_sortselect_opts(Lang) ->
+  By_Rating = tr:tr(Lang, goods_sort, <<"by_rating">>),
+  By_Cheap = tr:tr(Lang, goods_sort, <<"by_cheap">>),
+  By_Expensive = tr:tr(Lang, goods_sort, <<"by_expensive">>),
+  [ <<"<option value=\"1\" selected>">>, By_Rating, <<"</option>"
+  "<option value=\"2\">">>, By_Cheap, <<"</option>"
+  "<option value=\"3\">">>, By_Expensive, <<"</option>">> ].
 
 
-%generate_main_goodscards(PageGoodsData,Acc)
-generate_main_goodscards([],[]) ->
-  <<"<span id=\"no_goods_here\">No data !</span>">>;
-generate_main_goodscards([],Acc) ->
+%generate_main_goodscards(PageGoodsData, Lang, Acc)
+generate_main_goodscards([],Lang,[]) ->
+  No_Data = tr:tr(Lang, main_goods, <<"no_data">>),
+  [ <<"<span id=\"no_goods_here\">">>, No_Data, <<" !</span>"/utf8>> ];
+generate_main_goodscards([], Lang, Acc) ->
   lists:reverse(Acc);
-generate_main_goodscards([{Id, Title, Img_Title, Html_Preview_Text, Bought_Count, Price, Available_Status}|T],Acc) ->
+generate_main_goodscards([{Id, Title, Img_Title, Html_Preview_Text, Bought_Count, Price, Available_Status}|T], Lang, Acc) ->
   %io:format("gid: ~p~n",[Id]),
   [Mini0, Mini1|_] = string:split(Img_Title,"/",trailing),
   Mini_Img = [ Mini0, <<"/mini/">>, Mini1 ],
+  
+  Rating_Text = tr:tr(Lang, main_goods, <<"rating">>),
+  
   Rating = if Bought_Count >= 10, Available_Status =:= 1 ->
-      [ <<"<span class=\"rating btn disabled btn-sm\">Rating ">>, erlang:integer_to_binary(Bought_Count), <<"</span>">> ];
+      [ <<"<span class=\"rating btn disabled btn-sm\">">>, Rating_Text, <<" ">>, erlang:integer_to_binary(Bought_Count), <<"</span>">> ];
     true ->
       <<"">>
   end,
   Price2 = hm:balance_int2bin(Price),
+  
+  Delivery_Text = tr:tr(Lang, main_goods, <<"status_delivery">>),
+  Contact_Text = tr:tr(Lang, main_goods, <<"status_contact_manager">>),
+  NotAvailable_Text = tr:tr(Lang, main_goods, <<"status_not_available">>),
+  
   Price_Part = case Available_Status of
-    2 -> <<"<br><span>expecting delivery</span>">>;
-    3 -> <<"<br><span>contact the manager</span>">>;
-    4 -> <<"<br><span>not available</span>">>;
+    2 -> [ <<"<br><span>">>, Delivery_Text, <<"</span>">> ];
+    3 -> [ <<"<br><span>">>, Contact_Text, <<"</span>">> ];
+    4 -> [ <<"<br><span>">>, NotAvailable_Text, <<"</span>">> ];
     _ -> <<"">>
   end,
   Id2 = erlang:integer_to_binary(Id),
+  
+  Details = tr:tr(Lang, main_goods, <<"details">>),
+  To_Cart = tr:tr(Lang, main_goods, <<"add_to_cart">>),
   
   Z = [ <<"<div class=\"card\">"
   "<img class=\"card-img-top jslghtbx-thmb\" src=\"">>, Mini_Img, <<"\" data-jslghtbx=\"">>, Img_Title, <<"\">"
@@ -703,13 +724,13 @@ generate_main_goodscards([{Id, Title, Img_Title, Html_Preview_Text, Bought_Count
   "<p class=\"card-text\">">>, Html_Preview_Text, <<"</p>"
   "<p class=\"card-text\">">>, Rating, 
   <<"<span class=\"price btn disabled btn-sm\">$ ">>, Price2, Price_Part, <<"</span>"
-  "<a href=\"/goods/?id=">>, Id2, <<"\" target=\"_blank\" class=\"btn btn-outline-primary\">Details</a>"
-  "<a href=\"#!\" class=\"btn btn-success add2cart\" data-id=\"">>, Id2, <<"\" data-price=\"">>, erlang:integer_to_binary(Price), <<"\">Add to Cart</a>"
+  "<a href=\"/goods/?id=">>, Id2, <<"\" target=\"_blank\" class=\"btn btn-outline-primary\">">>, Details, <<"</a>"
+  "<a href=\"#!\" class=\"btn btn-success add2cart\" data-id=\"">>, Id2, <<"\" data-price=\"">>, erlang:integer_to_binary(Price), <<"\">">>, To_Cart, <<"</a>"
   "</p>"
   "</div>"
   "</div>">> ],
-  ?MODULE:generate_main_goodscards(T,[Z|Acc]);
-generate_main_goodscards(_,[]) ->
+  ?MODULE:generate_main_goodscards(T, Lang, [Z|Acc]);
+generate_main_goodscards(_, _, []) ->
   <<"<span id=\"no_goods_here\">Database error !</span>">>.
 
 

@@ -33,8 +33,11 @@ event(init) ->
       wf:redirect("/adminka/login/");
     _ ->
       
+      %Lang = hm:get_language(<<"lang">>,?REQ),
+      Lang = <<"uk">>,
+      
       Cats_Data = pq:get_categories(),
-      Cats_HTML = hg:generate_admin_cat_rows(Cats_Data, [], [], <<"">>),
+      Cats_HTML = hg:generate_admin_cat_rows(Cats_Data, [], Lang, [], <<"">>),
       
       wf:wire(wf:f("qi('all_categories').innerHTML='~s';", [unicode:characters_to_binary(Cats_HTML,utf8)]))
   end;
@@ -53,8 +56,11 @@ when erlang:is_integer(Id), Id > 0, erlang:is_integer(Val), Val >= 0  ->
           
           pq:upd_category_order_by_id(Id, Val),
           
+          %Lang = hm:get_language(<<"lang">>,?REQ),
+          Lang = <<"uk">>,
+          
           Cats_Data = pq:get_categories(),
-          Cats_HTML = hg:generate_admin_cat_rows(Cats_Data, [], [], <<"">>),
+          Cats_HTML = hg:generate_admin_cat_rows(Cats_Data, [], Lang, [], <<"">>),
           
           wf:wire(wf:f("qi('all_categories').innerHTML='~s';", [unicode:characters_to_binary(Cats_HTML,utf8)])),
           wf:wire("window.updorder_wait=false;");
@@ -81,8 +87,11 @@ when erlang:is_integer(Id), Id > 0, erlang:is_binary(Val), Val =/= <<"">>  ->
           Val2 = hm:htmlspecialchars(erlang:binary_to_list(hm:trim(Val))),
           pq:upd_category_name_by_id(Id, Val2),
           
+          %Lang = hm:get_language(<<"lang">>,?REQ),
+          Lang = <<"uk">>,
+          
           Cats_Data = pq:get_categories(),
-          Cats_HTML = hg:generate_admin_cat_rows(Cats_Data, [], [], <<"">>),
+          Cats_HTML = hg:generate_admin_cat_rows(Cats_Data, [], Lang, [], <<"">>),
           
           wf:wire(wf:f("qi('all_categories').innerHTML='~s';", [unicode:characters_to_binary(Cats_HTML,utf8)])),
           wf:wire("window.updname_wait=false;");
@@ -112,8 +121,11 @@ when erlang:is_binary(Val), Val =/= <<"">> ->
           
           pq:add_category(Val2, 0),
           
+          %Lang = hm:get_language(<<"lang">>,?REQ),
+          Lang = <<"uk">>,
+          
           Cats_Data = pq:get_categories(),
-          Cats_HTML = hg:generate_admin_cat_rows(Cats_Data, [], [], <<"">>),
+          Cats_HTML = hg:generate_admin_cat_rows(Cats_Data, [], Lang, [], <<"">>),
           
           wf:wire(wf:f("qi('all_categories').innerHTML='~s';", [unicode:characters_to_binary(Cats_HTML,utf8)])),
           wf:wire("window.newname_wait=false;");
@@ -139,8 +151,11 @@ when erlang:is_integer(Id), Id > 0, erlang:is_integer(Parent_Id), Parent_Id > 0 
               
               pq:upd_category_parent_by_ids(Id, Parent_Id),
               
+              %Lang = hm:get_language(<<"lang">>,?REQ),
+              Lang = <<"uk">>,
+              
               Cats_Data = pq:get_categories(),
-              Cats_HTML = hg:generate_admin_cat_rows(Cats_Data, [], [], <<"">>),
+              Cats_HTML = hg:generate_admin_cat_rows(Cats_Data, [], Lang, [], <<"">>),
               
               wf:wire(wf:f("qi('all_categories').innerHTML='~s';", [unicode:characters_to_binary(Cats_HTML,utf8)])),
               wf:wire("window.movecat_wait=false;");

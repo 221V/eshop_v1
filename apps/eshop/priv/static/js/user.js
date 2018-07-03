@@ -71,7 +71,10 @@ function cart_goods_recalc_prices(){
     var res = '$ ' + (window.cart_total / 100) + '';
     tot.innerHTML = res;
   }else{
-    document.querySelector('#CartModal').querySelector('.modal-body').innerHTML = 'No items';
+    var noitem_text = window.i18n[0]; if(noitem_text == undefined){ noitem_text = 'No items'; }
+    if(document.querySelector('#CartModal')){
+    document.querySelector('#CartModal').querySelector('.modal-body').innerHTML = noitem_text;
+    }
   }
 }
 
@@ -233,6 +236,17 @@ function del_oneitemlocalStorage(id){
 
 function items2cart(){
   var local = localStorage.getItem("cart");
+  
+  try{
+  var price_text = window.i18n[1]; if(price_text == undefined){ price_text = 'price'; }
+  var total_text = window.i18n[2]; if(total_text == undefined){ total_text = 'total'; }
+  var totalprice_text = window.i18n[3]; if(totalprice_text == undefined){ totalprice_text = 'Total price'; }
+  }catch(err){
+  var price_text = 'price';
+  var total_text = 'total';
+  var totalprice_text = 'Total price';
+  }
+  
   if((local !== null) && (local !== "null") && (local !== "[]")){
     // we have items
     var arr = JSON.parse(local);
@@ -246,10 +260,11 @@ function items2cart(){
       
       //result = result + '<div class="cartgood" data-id="' + id + '" data-price="' + price + '"><p><img alt="' + name + '" style="width: 60px; height: 60px;" src="#"><span>' + name + '</span></p><p><button type="button" class="cartgooddecr btn btn-outline-primary">-</button><input class="cartgoodscount" type="number" min="1" step="1" value="' + count + '"><button type="button" class="cartgoodincr btn btn-outline-primary">+</button><span class="goodtotalbl">price ' + price2 + '<br>total <span class="goodtotal">$</span></span><button type="button" class="deletegood btn btn-outline-danger">X</button></p></div><hr class="style16">';
       //micro-img add later
-      result = result + '<div class="cartgood" data-id="' + id + '" data-price="' + price + '"><p><span><a href="/goods/?id=' + id + '" target="_blank">' + name + '</a></span></p><p><button type="button" class="cartgooddecr btn btn-outline-primary">-</button><input class="cartgoodscount" type="number" min="1" step="1" value="' + count + '"><button type="button" class="cartgoodincr btn btn-outline-primary">+</button><span class="goodtotalbl">price ' + price2 + '<br>total <span class="goodtotal">$</span></span><button type="button" class="deletegood btn btn-outline-danger">X</button></p></div><hr class="style16">';
+      
+      result = result + '<div class="cartgood" data-id="' + id + '" data-price="' + price + '"><p><span><a href="/goods/?id=' + id + '" target="_blank">' + name + '</a></span></p><p><button type="button" class="cartgooddecr btn btn-outline-primary">-</button><input class="cartgoodscount" type="number" min="1" step="1" value="' + count + '"><button type="button" class="cartgoodincr btn btn-outline-primary">+</button><span class="goodtotalbl">' + price_text + ' ' + price2 + '<br>' + total_text + ' <span class="goodtotal">$</span></span><button type="button" class="deletegood btn btn-outline-danger">X</button></p></div><hr class="style16">';
     });
     if(result !== ''){
-      result = result + '<p class="carttotalbl"><span>Total price <span class="carttotal">$</span></span></p><hr class="style16">';
+      result = result + '<p class="carttotalbl"><span>' + totalprice_text + ' <span class="carttotal">$</span></span></p><hr class="style16">';
       if(qi('cartpage')){
         qi('cartpagegoods').innerHTML = result;
         cart_good_bind();
@@ -264,10 +279,16 @@ function items2cart(){
     }
   }else{
     // no items
+    try{
+    var noitem_text = window.i18n[0]; if(noitem_text == undefined){ noitem_text = 'No items'; }
+    }catch(err){
+    var noitem_text = 'No items';
+    }
+    
     if(qi('cartpage')){
-      qi('cartpagegoods').innerHTML = 'No items';
+      qi('cartpagegoods').innerHTML = noitem_text;
     }else{
-      document.querySelector('#CartModal').querySelector('.modal-body').innerHTML = 'No items';
+      document.querySelector('#CartModal').querySelector('.modal-body').innerHTML = noitem_text;
     }
     qi('ordernow').style.display='none';
     qi('cart_userinfo').style.display='none';
@@ -329,7 +350,12 @@ function bind_cart_ordernow(){
       }
       }, 100);
     }else{
-      alert('Please fill the form !');
+      try{
+      var fillform_text = window.i18n[4]; if(fillform_text == undefined){ fillform_text = 'Please fill the form'; }
+      }catch(err){
+      var fillform_text = 'Please fill the form';
+      }
+      alert(fillform_text + ' !');
     }
   });
 }
