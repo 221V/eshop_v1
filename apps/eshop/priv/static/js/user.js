@@ -47,7 +47,13 @@ function cart_good_calc_price(e,par){
   var nprice = +(par0.dataset.price);
   var ngcount = +(par.querySelector('.cartgoodscount').value);
   
-  var res = '$ ' + ((nprice * ngcount) / 100) + '';
+  var res0 = (nprice * ngcount) / 100;
+  var currency_text = window.settings[0]; if(currency_text == undefined){ currency_text = 'usd'; }
+  if(currency_text === 'usd'){
+  var res = '$ ' + res0 + '';
+  }else if(currency_text === 'uah'){
+  var res = '' + res0 + ' грн.';
+  }
   var goodtotalel = par.querySelector('.goodtotal');
   goodtotalel.innerHTML = res;
   
@@ -58,18 +64,36 @@ function cart_good_calc_price(e,par){
 function cart_goods_recalc_prices(){
   /* recalc all */
   window.cart_total = 0;
+
+  try{
+  var currency_text = window.settings[0]; if(currency_text == undefined){ currency_text = 'usd'; }
+  }catch(err){
+  currency_text = 'usd';
+  }
+  
   var cart_goods = document.querySelectorAll('.cartgood');
   cart_goods.forEach(function(n){
     var nprice = +(n.dataset.price);
     var ngcount = +(n.querySelector('.cartgoodscount').value);
-    n.querySelector('.goodtotal').innerHTML = '$ ' + (ngcount * nprice / 100) + '';
+    var res0 = (ngcount * nprice) / 100;
+    if(currency_text === 'usd'){
+    var res = '$ ' + res0 + '';
+    }else if(currency_text === 'uah'){
+    var res = '' + res0 + ' грн.';
+    }
+    n.querySelector('.goodtotal').innerHTML = res;
     window.cart_total = window.cart_total + (nprice * ngcount);
   });
   
   var tot = document.querySelector('.carttotal');
   if(tot){
-    var res = '$ ' + (window.cart_total / 100) + '';
-    tot.innerHTML = res;
+    var res1 = window.cart_total / 100;
+    if(currency_text === 'usd'){
+    var res2 = '$ ' + res1 + '';
+    }else if(currency_text === 'uah'){
+    var res2 = '' + res1 + ' грн.';
+    }
+    tot.innerHTML = res2;
   }else{
     var noitem_text = window.i18n[0]; if(noitem_text == undefined){ noitem_text = 'No items'; }
     if(document.querySelector('#CartModal')){
@@ -247,6 +271,12 @@ function items2cart(){
   var totalprice_text = 'Total price';
   }
   
+  try{
+  var currency_text = window.settings[0]; if(currency_text == undefined){ currency_text = 'usd'; }
+  }catch(err){
+  currency_text = 'usd';
+  }
+  
   if((local !== null) && (local !== "null") && (local !== "[]")){
     // we have items
     var arr = JSON.parse(local);
@@ -256,7 +286,12 @@ function items2cart(){
       var name = el[1];
       var count = el[2];
       var price = el[3];
+      
+      if(currency_text === 'usd'){
       var price2 = '$ ' + (price/100) + '';
+      }else if(currency_text === 'uah'){
+      var price2 = '' + (price/100) + ' грн.';
+      }
       
       //result = result + '<div class="cartgood" data-id="' + id + '" data-price="' + price + '"><p><img alt="' + name + '" style="width: 60px; height: 60px;" src="#"><span>' + name + '</span></p><p><button type="button" class="cartgooddecr btn btn-outline-primary">-</button><input class="cartgoodscount" type="number" min="1" step="1" value="' + count + '"><button type="button" class="cartgoodincr btn btn-outline-primary">+</button><span class="goodtotalbl">price ' + price2 + '<br>total <span class="goodtotal">$</span></span><button type="button" class="deletegood btn btn-outline-danger">X</button></p></div><hr class="style16">';
       //micro-img add later
@@ -264,7 +299,7 @@ function items2cart(){
       result = result + '<div class="cartgood" data-id="' + id + '" data-price="' + price + '"><p><span><a href="/goods/?id=' + id + '" target="_blank">' + name + '</a></span></p><p><button type="button" class="cartgooddecr btn btn-outline-primary">-</button><input class="cartgoodscount" type="number" min="1" step="1" value="' + count + '"><button type="button" class="cartgoodincr btn btn-outline-primary">+</button><span class="goodtotalbl">' + price_text + ' ' + price2 + '<br>' + total_text + ' <span class="goodtotal">$</span></span><button type="button" class="deletegood btn btn-outline-danger">X</button></p></div><hr class="style16">';
     });
     if(result !== ''){
-      result = result + '<p class="carttotalbl"><span>' + totalprice_text + ' <span class="carttotal">$</span></span></p><hr class="style16">';
+      result = result + '<p class="carttotalbl"><span>' + totalprice_text + ' <span class="carttotal"></span></span></p><hr class="style16">';
       if(qi('cartpage')){
         qi('cartpagegoods').innerHTML = result;
         cart_good_bind();

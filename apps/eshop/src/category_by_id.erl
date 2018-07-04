@@ -70,7 +70,7 @@ main() ->
                   Load2 = tr:tr(Lang, main, <<"load_more_goods2">>),
                   Load_More = [ Load1, <<" [30] ">>, Load2 ],
                   
-                  SortSelectHTML = hg:generate_sortselect_opts(),
+                  SortSelectHTML = hg:generate_sortselect_opts(Lang),
                   Page_Goods = hg:generate_main_goodscards(Goods_Data, Lang, []),
                   CartWindowHTML = tr:tr(Lang, cart, <<"no_items">>),
                   Category_Name2 = tr_catalog:tr(Lang,Category_Name),
@@ -141,16 +141,19 @@ event(init) ->
   %Lang = hm:get_language(<<"lang">>,?REQ),
   Lang = <<"uk">>,
   
-  JS_NoItems = tr:tr(Lang, cart, <<"no_items">>),
-  JS_Price = tr:tr(Lang, js, <<"price">>),
-  JS_Total = tr:tr(Lang, js, <<"total">>),
-  JS_Total_Price = tr:tr(Lang, js, <<"total_price">>),
-  JS_Fill_Form = tr:tr(Lang, js, <<"fill_form">>),
+  JS_NoItems = tr:tr(Lang, cart, <<"no_items">>), % i18n[0]
+  JS_Price = tr:tr(Lang, js, <<"price">>), % i18n[1]
+  JS_Total = tr:tr(Lang, js, <<"total">>), % i18n[2]
+  JS_Total_Price = tr:tr(Lang, js, <<"total_price">>), % i18n[3]
+  JS_Fill_Form = tr:tr(Lang, js, <<"fill_form">>), % i18n[4]
+  
+  JS_Currency = wf:config(n2o, currency, "usd"), % settings[0]
   
   wf:wire(wf:f("window.i18n=[];window.i18n.push('~s');"
     "window.i18n.push('~s');window.i18n.push('~s');"
     "window.i18n.push('~s');window.i18n.push('~s');"
-    "items2cart();",[unicode:characters_to_binary(JS_NoItems,utf8), unicode:characters_to_binary(JS_Price,utf8), unicode:characters_to_binary(JS_Total,utf8), unicode:characters_to_binary(JS_Total_Price,utf8), unicode:characters_to_binary(JS_Fill_Form,utf8)])),
+    "window.settings=[];window.settings.push('~s');"
+    "items2cart();",[unicode:characters_to_binary(JS_NoItems,utf8), unicode:characters_to_binary(JS_Price,utf8), unicode:characters_to_binary(JS_Total,utf8), unicode:characters_to_binary(JS_Total_Price,utf8), unicode:characters_to_binary(JS_Fill_Form,utf8), unicode:characters_to_binary(JS_Currency,utf8)])),
   
   Cat_Id = wf:qp(<<"id">>),
   Cat_Id_Valid = erlang:is_binary(Cat_Id) andalso hm:is_valid_binnumber(Cat_Id),
@@ -226,7 +229,7 @@ when erlang:is_integer(Cat_Id), erlang:is_integer(Sort_Type) ->
                    "window.goodsloaded=~s;window.load_first_wait=false;",[ <<"30">>]));
     [{_,_,_,_,_,_,_}|_] ->
       
-      Page_Goods = hg:generate_main_goodscards(Goods_Data,[]),
+      Page_Goods = hg:generate_main_goodscards(Goods_Data, Lang, []),
       wf:wire(wf:f("var cont = document.querySelector('.card-columns');cont.innerHTML = `~s`;",[unicode:characters_to_binary(Page_Goods,utf8)])),
       
       Load1 = tr:tr(Lang, main, <<"load_more_goods1">>),
@@ -260,7 +263,7 @@ when erlang:is_integer(Loaded), Loaded > 0, erlang:is_integer(All_Count), All_Co
       ok;
     [{_,_,_,_,_,_,_}|_] ->
       
-      Page_Goods = hg:generate_main_goodscards(Goods_Data,[]),
+      Page_Goods = hg:generate_main_goodscards(Goods_Data, Lang, []),
       wf:wire(wf:f("var cont = document.querySelector('.card-columns');cont.insertAdjacentHTML('beforeend', `~s`);",[unicode:characters_to_binary(Page_Goods,utf8)])),
       
       Offset2 = Loaded + Limit,

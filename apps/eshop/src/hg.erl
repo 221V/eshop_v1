@@ -717,13 +717,21 @@ generate_main_goodscards([{Id, Title, Img_Title, Html_Preview_Text, Bought_Count
   Details = tr:tr(Lang, main_goods, <<"details">>),
   To_Cart = tr:tr(Lang, main_goods, <<"add_to_cart">>),
   
+  All_Price = case wf:config(n2o, currency, "usd") of
+    "usd" ->
+      [ <<"$ ">>, Price2, Price_Part ];
+    %"uah" ->
+    _ ->
+      [ Price2, Price_Part, <<" грн."/utf8>> ]
+  end,
+  
   Z = [ <<"<div class=\"card\">"
   "<img class=\"card-img-top jslghtbx-thmb\" src=\"">>, Mini_Img, <<"\" data-jslghtbx=\"">>, Img_Title, <<"\">"
   "<div class=\"card-body\">"
   "<h5 class=\"card-title\"><a href=\"/goods/?id=">>, Id2, <<"\" target=\"_blank\">">>, Title, <<"</a></h5>"
   "<p class=\"card-text\">">>, Html_Preview_Text, <<"</p>"
   "<p class=\"card-text\">">>, Rating, 
-  <<"<span class=\"price btn disabled btn-sm\">$ ">>, Price2, Price_Part, <<"</span>"
+  <<"<span class=\"price btn disabled btn-sm\">">>, All_Price, <<"</span>"
   "<a href=\"/goods/?id=">>, Id2, <<"\" target=\"_blank\" class=\"btn btn-outline-primary\">">>, Details, <<"</a>"
   "<a href=\"#!\" class=\"btn btn-success add2cart\" data-id=\"">>, Id2, <<"\" data-price=\"">>, erlang:integer_to_binary(Price), <<"\">">>, To_Cart, <<"</a>"
   "</p>"
@@ -745,14 +753,29 @@ prepare_ordermessage_for_tg(Name, Phone, Email, Text, {Goods_Info3}) ->
 
 %prepare_ordermessage_for_tg_helper1(Goods_Info,Acc,Acc_Total)
 prepare_ordermessage_for_tg_helper1([],Acc,Acc_Total) ->
-  [ lists:reverse(Acc), "\n", <<"Total Price : $ ">>, hm:balance_int2bin(Acc_Total), "\n" ];
+  Balance = hm:balance_int2bin(Acc_Total),
+  All_Balance = case wf:config(n2o, currency, "usd") of
+    "usd" ->
+      [ <<"$ ">>, Balance ];
+    %"uah" ->
+    _ ->
+      [ Balance, <<" грн."/utf8>> ]
+  end,
+  [ lists:reverse(Acc), "\n", <<"Total Price : ">>, All_Balance, "\n" ];
 prepare_ordermessage_for_tg_helper1(Goods_Info,[],Acc_Total) ->
   Z = [ <<"Order goods list:">>, "\n" ],
   ?MODULE:prepare_ordermessage_for_tg_helper1(Goods_Info,[Z|[]],Acc_Total);
 prepare_ordermessage_for_tg_helper1([{Id,Name,Count,Price}|T],Acc,Acc_Total) ->
   Price2 = erlang:binary_to_integer(Price),
   Price3 = hm:balance_int2bin(Price2),
-  Z = [ <<"Id: ">>, Id, <<", ">>, Name, <<", Count: ">>, Count, <<", Price: $ ">>, Price3, "\n" ],
+  Price4 = case wf:config(n2o, currency, "usd") of
+    "usd" ->
+      [ <<"$ ">>, Price3 ];
+    %"uah" ->
+    _ ->
+      [ Price3, <<" грн."/utf8>> ]
+  end,
+  Z = [ <<"Id: ">>, Id, <<", ">>, Name, <<", Count: ">>, Count, <<", Price (per piece): ">>, Price4, "\n" ],
   ?MODULE:prepare_ordermessage_for_tg_helper1(T,[Z|Acc],Acc_Total + (Price2 * erlang:binary_to_integer(Count))).
 
 

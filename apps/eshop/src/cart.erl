@@ -34,16 +34,19 @@ event(init) ->
   %Lang = hm:get_language(<<"lang">>,?REQ),
   Lang = <<"uk">>,
   
-  JS_NoItems = tr:tr(Lang, cart, <<"no_items">>),
-  JS_Price = tr:tr(Lang, js, <<"price">>),
-  JS_Total = tr:tr(Lang, js, <<"total">>),
-  JS_Total_Price = tr:tr(Lang, js, <<"total_price">>),
-  JS_Fill_Form = tr:tr(Lang, js, <<"fill_form">>),
+  JS_NoItems = tr:tr(Lang, cart, <<"no_items">>), % i18n[0]
+  JS_Price = tr:tr(Lang, js, <<"price">>), % i18n[1]
+  JS_Total = tr:tr(Lang, js, <<"total">>), % i18n[2]
+  JS_Total_Price = tr:tr(Lang, js, <<"total_price">>), % i18n[3]
+  JS_Fill_Form = tr:tr(Lang, js, <<"fill_form">>), % i18n[4]
+  
+  JS_Currency = wf:config(n2o, currency, "usd"), % settings[0]
   
   wf:wire(wf:f("window.i18n=[];window.i18n.push('~s');"
     "window.i18n.push('~s');window.i18n.push('~s');"
     "window.i18n.push('~s');window.i18n.push('~s');"
-    "items2cart();",[unicode:characters_to_binary(JS_NoItems,utf8), unicode:characters_to_binary(JS_Price,utf8), unicode:characters_to_binary(JS_Total,utf8), unicode:characters_to_binary(JS_Total_Price,utf8), unicode:characters_to_binary(JS_Fill_Form,utf8)]));
+    "window.settings=[];window.settings.push('~s');"
+    "items2cart();",[unicode:characters_to_binary(JS_NoItems,utf8), unicode:characters_to_binary(JS_Price,utf8), unicode:characters_to_binary(JS_Total,utf8), unicode:characters_to_binary(JS_Total_Price,utf8), unicode:characters_to_binary(JS_Fill_Form,utf8), unicode:characters_to_binary(JS_Currency,utf8)]));
 
 
 event({client,{new_order,Name,Phone,Email,Text,GoodsInfo}})
