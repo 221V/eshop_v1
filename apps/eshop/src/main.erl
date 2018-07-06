@@ -43,28 +43,28 @@ event(init) ->
   %Lang = hm:get_language(<<"lang">>,?REQ),
   Lang = <<"uk">>,
   
+  JS_NoItems = tr:tr(Lang, cart, <<"no_items">>), % i18n[0]
+  JS_Price = tr:tr(Lang, js, <<"price">>), % i18n[1]
+  JS_Total = tr:tr(Lang, js, <<"total">>), % i18n[2]
+  JS_Total_Price = tr:tr(Lang, js, <<"total_price">>), % i18n[3]
+  JS_Fill_Form = tr:tr(Lang, js, <<"fill_form">>), % i18n[4]
+  
+  JS_Currency = wf:config(n2o, currency, "usd"), % settings[0]
+  
+  wf:wire(wf:f("window.i18n=[];window.i18n.push('~s');"
+    "window.i18n.push('~s');window.i18n.push('~s');"
+    "window.i18n.push('~s');window.i18n.push('~s');"
+    "window.settings=[];window.settings.push('~s');",[unicode:characters_to_binary(JS_NoItems,utf8), unicode:characters_to_binary(JS_Price,utf8), unicode:characters_to_binary(JS_Total,utf8), unicode:characters_to_binary(JS_Total_Price,utf8), unicode:characters_to_binary(JS_Fill_Form,utf8), unicode:characters_to_binary(JS_Currency,utf8)])),
+  
   [{Count}] = pq:get_allactive_goods_count(),
   % Limit first load = 30
   if Count =< 30 ->
-      wf:wire("qi('loadmorebl').style.display='none';found_and_select(qi('goodssorting'),1);");
+      wf:wire("qi('loadmorebl').style.display='none';found_and_select(qi('goodssorting'),1);items2cart();");
     true ->
       % Count > 30
       Load1 = tr:tr(Lang, main, <<"load_more_goods1">>),
       Load2 = tr:tr(Lang, main, <<"load_more_goods2">>),
       More_Text = [ Load1, <<" [30] ">>, Load2 ],
-      
-      JS_NoItems = tr:tr(Lang, cart, <<"no_items">>), % i18n[0]
-      JS_Price = tr:tr(Lang, js, <<"price">>), % i18n[1]
-      JS_Total = tr:tr(Lang, js, <<"total">>), % i18n[2]
-      JS_Total_Price = tr:tr(Lang, js, <<"total_price">>), % i18n[3]
-      JS_Fill_Form = tr:tr(Lang, js, <<"fill_form">>), % i18n[4]
-      
-      JS_Currency = wf:config(n2o, currency, "usd"), % settings[0]
-      
-      wf:wire(wf:f("window.i18n=[];window.i18n.push('~s');"
-        "window.i18n.push('~s');window.i18n.push('~s');"
-        "window.i18n.push('~s');window.i18n.push('~s');"
-        "window.settings=[];window.settings.push('~s');",[unicode:characters_to_binary(JS_NoItems,utf8), unicode:characters_to_binary(JS_Price,utf8), unicode:characters_to_binary(JS_Total,utf8), unicode:characters_to_binary(JS_Total_Price,utf8), unicode:characters_to_binary(JS_Fill_Form,utf8), unicode:characters_to_binary(JS_Currency,utf8)])),
       
       wf:wire(wf:f("found_and_select(qi('goodssorting'),1);window.goodsallcount=~s;window.goodsloaded=~s;window.sort_type=~s;"
                    "qi('loadmorebtn').innerText='~s';bind_load_more();items2cart();",[erlang:integer_to_binary(Count), <<"30">>, <<"1">>, unicode:characters_to_binary(More_Text,utf8)]))

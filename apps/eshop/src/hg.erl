@@ -690,8 +690,18 @@ generate_main_goodscards([], Lang, Acc) ->
   lists:reverse(Acc);
 generate_main_goodscards([{Id, Title, Img_Title, Html_Preview_Text, Bought_Count, Price, Available_Status}|T], Lang, Acc) ->
   %io:format("gid: ~p~n",[Id]),
-  [Mini0, Mini1|_] = string:split(Img_Title,"/",trailing),
-  Mini_Img = [ Mini0, <<"/mini/">>, Mini1 ],
+  %io:format("itit: ~p~n",[Img_Title]),
+  
+  Mini_Img = case hm:is_substr(Img_Title,<<"/">>) of
+    true ->
+      % maybe img url here
+      [Mini0, Mini1|_] = string:split(Img_Title,"/",trailing),
+      [ Mini0, <<"/mini/">>, Mini1 ];
+    %false ->
+    _ ->
+     % no img url here
+     <<"#!">>
+  end,
   
   Rating_Text = tr:tr(Lang, main_goods, <<"rating">>),
   
@@ -722,7 +732,7 @@ generate_main_goodscards([{Id, Title, Img_Title, Html_Preview_Text, Bought_Count
       [ <<"$ ">>, Price2, Price_Part ];
     %"uah" ->
     _ ->
-      [ Price2, Price_Part, <<" грн."/utf8>> ]
+      [ Price2, <<" грн."/utf8>>, Price_Part ]
   end,
   
   Z = [ <<"<div class=\"card\">"

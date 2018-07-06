@@ -503,9 +503,9 @@ make_valid_day_list(Data) ->
 
 
 is_substr(Str,SubStr) ->
-  Pos = string:str(Str,SubStr),
-  if Pos > 0 -> true;
-    true -> false
+  case string:find(Str,SubStr) of
+    nomatch -> false;
+    _ -> true
   end.
 
 
